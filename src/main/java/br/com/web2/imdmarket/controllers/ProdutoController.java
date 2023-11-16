@@ -44,14 +44,13 @@ public class ProdutoController {
 
     @PutMapping("/produtos/{id}")
     public ResponseEntity<Object> putProduct(@PathVariable(value="id") Long id,
-                                             @RequestBody @Valid ProdutoDto produtoDto) {
+                                             @RequestBody ProdutoDto produtoDto) {
         Optional<ProdutoEntity> produtoOptional = produtoService.findById(id);
         if(produtoOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado!");
         }
         ProdutoEntity produto = produtoOptional.get();
-        BeanUtils.copyProperties(produtoDto, produto);
-        return ResponseEntity.status(HttpStatus.OK).body(produtoService.saveEntity(produto));
+        return ResponseEntity.status(HttpStatus.OK).body(produtoService.updateEntity(produto, produtoDto));
     }
 
 }
