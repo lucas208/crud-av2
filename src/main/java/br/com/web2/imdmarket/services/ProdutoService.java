@@ -30,4 +30,9 @@ public class ProdutoService {
     public void saveEntities(List<ProdutoEntity> entities) {
         produtoRepository.saveAll(entities);
     }
+
+    @Transactional
+    public ProdutoEntity saveEntity(ProdutoEntity entity){
+        return produtoRepository.save(entity);
+    }
 }
