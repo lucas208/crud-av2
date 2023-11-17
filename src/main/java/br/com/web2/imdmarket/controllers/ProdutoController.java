@@ -22,13 +22,13 @@ public class ProdutoController {
 
     @GetMapping("/produtos")
     public ResponseEntity<List<ProdutoEntity>> getAll(){
-        List<ProdutoEntity> produtos = produtoService.findAll();
+        List<ProdutoEntity> produtos = produtoService.findAllAtivos();
         return ResponseEntity.status(HttpStatus.OK).body(produtos);
     }
 
     @GetMapping("/produtos/{id}")
     public ResponseEntity<Object> getById(@PathVariable(value="id") Long id){
-        Optional<ProdutoEntity> produtoOptional = produtoService.findById(id);
+        Optional<ProdutoEntity> produtoOptional = produtoService.findByIdAtivo(id);
         if(produtoOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado!");
         }
@@ -45,12 +45,32 @@ public class ProdutoController {
     @PutMapping("/produtos/{id}")
     public ResponseEntity<Object> putProduct(@PathVariable(value="id") Long id,
                                              @RequestBody ProdutoDto produtoDto) {
-        Optional<ProdutoEntity> produtoOptional = produtoService.findById(id);
+        Optional<ProdutoEntity> produtoOptional = produtoService.findByIdAtivo(id);
         if(produtoOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado!");
         }
         ProdutoEntity produto = produtoOptional.get();
         return ResponseEntity.status(HttpStatus.OK).body(produtoService.updateEntity(produto, produtoDto));
+    }
+
+    @DeleteMapping("/produtos/{id}")
+    public ResponseEntity<Object> deleteProduct(@PathVariable(value = "id") Long id) {
+        Optional<ProdutoEntity> produto = produtoService.findById(id);
+        if(produto.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado!");
+        }
+        produtoService.delete(produto.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Produto permanentemente excluído com sucesso!");
+    }
+
+    @PatchMapping("/produtos/{id}")
+    public ResponseEntity<Object> deleteLogic(@PathVariable Long id) {
+        Optional<ProdutoEntity> produto = produtoService.findByIdAtivo(id);
+        if(produto.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado!");
+        }
+        produtoService.softDelete(produto.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Produto  excluído com sucesso!");
     }
 
 }

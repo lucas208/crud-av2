@@ -19,14 +19,19 @@ public class ProdutoService {
         this.produtoRepository = produtoRepository;
     }
 
+
+    @Transactional
+    public Optional<ProdutoEntity> findById(Long id) {
+        return  produtoRepository.findById(id);
+    }
     @Transactional(readOnly = true)
-    public List<ProdutoEntity> findAll(){
-        return produtoRepository.findAll();
+    public List<ProdutoEntity> findAllAtivos(){
+        return produtoRepository.findAllAtivos();
     }
 
     @Transactional(readOnly = true)
-    public Optional<ProdutoEntity> findById(Long id){
-        return produtoRepository.findById(id);
+    public Optional<ProdutoEntity> findByIdAtivo(Long id){
+        return produtoRepository.findByIdAtivo(id);
     }
 
     @Transactional
@@ -58,5 +63,16 @@ public class ProdutoService {
        }
 
        return produtoRepository.save(produto);
+    }
+
+    @Transactional
+    public void delete(ProdutoEntity entity) {
+        produtoRepository.delete(entity);
+    }
+
+    @Transactional
+    public void softDelete(ProdutoEntity entity) {
+        entity.setAtivo(false);
+        produtoRepository.save(entity);
     }
 }
